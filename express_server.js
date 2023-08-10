@@ -8,6 +8,25 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+function generateRandomString(length) {
+  let result = '';
+  let counter = 0;
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length -1;
+  while (counter < length) {
+    result += characters.charAt(Math.random() * charactersLength);
+    counter += 1;
+  }
+  console.log(result);
+  return result;
+  
+}
+
+generateRandomString(6)
+
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -15,6 +34,11 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
 app.get("/urls/:id", (req, res) => {
