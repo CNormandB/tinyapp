@@ -20,10 +20,7 @@ function generateRandomString(length) {
   }
   console.log(result);
   return result;
-  
 }
-
-generateRandomString(6)
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -37,8 +34,9 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  let randomString = generateRandomString(6)
+  urlDatabase[randomString]= req.body.longURL
+  res.redirect(`/urls/${randomString}`);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -56,6 +54,11 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+});
+
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {
