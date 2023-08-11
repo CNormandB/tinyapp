@@ -52,10 +52,14 @@ app.use(express.urlencoded({ extended: true }));
 
 //render "Create New URL" page with urls_new.ejs
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-  user : users[req.cookies.user_id]
-};
-  res.render("urls_new", templateVars);
+  if (req.cookies.user_id) {
+    const templateVars = {
+      user : users[req.cookies.user_id]
+    };
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 //render "My URL's" page using the urlDatabase object and urls_index.ejs
@@ -68,9 +72,14 @@ app.get("/urls", (req, res) => {
 
 //creating a new random Short URL ID  + redirect to /urls/${randomString}
 app.post("/urls", (req, res) => {
-  let randomString = generateRandomString(6)
-  urlDatabase[randomString]= req.body.longURL
-  res.redirect(`/urls/${randomString}`);
+  if (req.cookies.user_id) {
+    let randomString = generateRandomString(6)
+    urlDatabase[randomString]= req.body.longURL
+    res.redirect(`/urls/${randomString}`);
+  } else {
+    res.send("<h1>Please log in to Shorten a URL.</h1>");
+  }
+
 });
 
 //render individual pages for each  ID (access by adding the short URL after /urls/)
@@ -100,10 +109,14 @@ delete urlDatabase[req.params.id];
 res.redirect("/urls");
 });
 
-
+//redirecting to a long url based on a shortened url
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
+  if (req.params.id in urlDatabase) {
+    const longURL = urlDatabase[req.params.id];
+    res.redirect(longURL);
+  } else {
+    res.send ("<h1>ID does not exist</h1>")
+  }
 });
 
 //It should remove the cookie named user_id + redirect to /urls
@@ -114,7 +127,11 @@ app.post("/logout", (req, res) => {
 
 //render /register page
 app.get("/register",(req, res) => {
-  res.render("user_registration")
+  if (req.cookies.user_id) {
+    res.redirect("/urls");
+  } else {
+    res.render("user_registration");
+  }
 });
 
 //enables registration form for new users
@@ -143,7 +160,11 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("user_login");
+  if (req.cookies.user_id) {
+    res.redirect("/urls");
+  } else {
+    res.render("user_login");
+  }
 });
 
 //check for matching email and password - 403 if incorect, - set cookie + redirect if matching
@@ -153,7 +174,7 @@ app.post("/login", (req, res) => {
     res.status(403);
     res.send("email or password is incorrect");
   }else { 
-    res.cookie("user_id", user.id) 
+    res.cookie("user_id", user.id);
   }
   res.redirect("/urls");
 });
