@@ -9,6 +9,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+
 function generateRandomString(length) {
   let result = '';
   let counter = 0;
@@ -24,31 +25,58 @@ function generateRandomString(length) {
 
 app.use(express.urlencoded({ extended: true }));
 
+//render "Create New URL" page with urls_new.ejs
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+//render "My URL's" page using the urlDatabase object and urls_index.ejs
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
+//creating a new random Short URL ID
 app.post("/urls", (req, res) => {
   let randomString = generateRandomString(6)
   urlDatabase[randomString]= req.body.longURL
   res.redirect(`/urls/${randomString}`);
 });
 
+//render individual pages for each  ID (access by adding the short URL after /urls/)
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
 });
 
+/*
+Goal: update long url in URLDatabase
+variables: 
+  req.params.id (key)
+  urlDatabase (where the long url is held)
+  req.body.longURL (access the new longURL)
+*/
+app.post("/urls/:id", (req, res) => {
+  console.log(req.params.id);
+  console.log(urlDatabase);
+  console.log(req.body.longURL);
+  urlDatabase[req.params.id] = req.body.longURL;
+  res.redirect(`/urls/${req.params.id}`);
+});
+
+//Delete URLs
 app.post("/urls/:id/delete", (req, res) => {
 delete urlDatabase[req.params.id];
 res.redirect("/urls");
 });
 
+
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
+});
+
+//say hello on / page
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -59,11 +87,6 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-});
-
-app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {
