@@ -106,16 +106,10 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-//It should set a cookie named username to the value submitted in the request body via the login form + redirect to /urls
-app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
-});
-
-//It should remove the cookie named username + redirect to /urls
+//It should remove the cookie named user_id + redirect to /urls
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 //render /register page
@@ -152,12 +146,17 @@ app.get("/login", (req, res) => {
   res.render("user_login");
 });
 
-
-
-/*
+//check for matching email and password - 403 if incorect, - set cookie + redirect if matching
 app.post("/login", (req, res) => {
-  if (lookupUserByEmail(email))
-});*/
+  let user = lookupUserByEmail(req.body.email);
+  if (!user || user.password !== req.body.password) {
+    res.status(403);
+    res.send("email or password is incorrect");
+  }else { 
+    res.cookie("user_id", user.id) 
+  }
+  res.redirect("/urls");
+});
 
 //say hello on / page
 app.get("/", (req, res) => {
