@@ -172,16 +172,16 @@ app.post("/register", (req, res) => {
   if (getUserByEmail(email, users)) {
     res.status(400);
     res.send("email is already in use");
+  } else {
+      let newUserID = generateRandomString(13);
+      users[newUserID] = {
+        id: newUserID,
+        email: email,
+        password: bcrypt.hashSync(password, 10)
+      };
+      req.session.user_id = newUserID;
+      res.redirect("/urls");
   }
-
-  let newUserID = generateRandomString(13);
-  users[newUserID] = {
-    id: newUserID,
-    email: email,
-    password: bcrypt.hashSync(password, 10)
-  };
-  req.session.user_id = newUserID;
-  res.redirect("/urls");
 });
 
 app.get("/login", (req, res) => {
