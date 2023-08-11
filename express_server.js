@@ -97,6 +97,12 @@ app.post("/logout",(req, res) => {
   res.redirect("/urls");
 });
 
+//render /register page
+app.get("/register",(req, res) => {
+  res.render("user_registration")
+});
+
+
 
 //say hello on / page
 app.get("/", (req, res) => {
