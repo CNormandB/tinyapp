@@ -21,15 +21,15 @@
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
       </div>
-      <div 
-        <p class="card-text">
-        <th scope="col">Edit</th>
+        <div class="card-header"></div>
+        <div class="card-body">
+          <h5 class="card-title">Edit</h5></h5>
         <td><form method="POST" action="/urls/<%= id %>/">
         <input type="text" id="longURL" name="longURL">
-        <button type="submit">Edit</button>
+        <button type="submit">Submit</button>
         </form>
         </td> 
-        </p>
+      </p>
       </div>
       <div class="card-footer text-muted"></div>
     </div>
