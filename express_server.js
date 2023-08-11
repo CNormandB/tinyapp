@@ -36,7 +36,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-//creating a new random Short URL ID
+//creating a new random Short URL ID  + redirect to /urls/${randomString}
 app.post("/urls", (req, res) => {
   let randomString = generateRandomString(6)
   urlDatabase[randomString]= req.body.longURL
@@ -55,16 +55,14 @@ variables:
   req.params.id (key)
   urlDatabase (where the long url is held)
   req.body.longURL (access the new longURL)
+   + redirect to /urls
 */
 app.post("/urls/:id", (req, res) => {
-  console.log(req.params.id);
-  console.log(urlDatabase);
-  console.log(req.body.longURL);
   urlDatabase[req.params.id] = req.body.longURL;
   res.redirect("/urls");
 });
 
-//Delete URLs
+//Delete selected URL + redirect to /urls
 app.post("/urls/:id/delete", (req, res) => {
 delete urlDatabase[req.params.id];
 res.redirect("/urls");
@@ -74,6 +72,12 @@ res.redirect("/urls");
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
+});
+
+//It should set a cookie named username to the value submitted in the request body via the login form + redirect to /urls
+app.post("/login",(req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
 });
 
 //say hello on / page
