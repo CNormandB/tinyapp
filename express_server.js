@@ -91,6 +91,12 @@ app.post("/login",(req, res) => {
   res.redirect("/urls");
 });
 
+//It should remove the cookie named username + redirect to /urls
+app.post("/logout",(req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
+});
+
 
 //say hello on / page
 app.get("/", (req, res) => {
