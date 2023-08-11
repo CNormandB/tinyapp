@@ -27,12 +27,12 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: bcrypt.hashSync("purple-monkey-dinosaur", 10),
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk",
+    password: bcrypt.hashSync("dishwasher-funk", 10),
   },
 };
 
@@ -135,7 +135,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 //redirecting to a long url based on a shortened url
-// TODO: Possible issue with non valid
+// TODO: Possible issue with non valid longURL causing the else to trigger
 app.get("/u/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     const longURL = urlDatabase[req.params.id].longURL;
@@ -202,7 +202,7 @@ app.post("/login", (req, res) => {
     res.status(403);
     res.send("email or password is incorrect");
   } else {
-    req.session.user_id = newUserID;
+    req.session.user_id = user.id;
     res.redirect("/urls");
   }
 });
