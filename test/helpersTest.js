@@ -4,13 +4,13 @@ const { getUserByEmail } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
   "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
@@ -23,9 +23,9 @@ describe('getUserByEmail', function() {
     assert.equal(user.id, expectedUserID)
   });
 
-  it('should return undefined for non-existent email', function(){
+  it('should return undefined for non-existent email', function() {
     const user = getUserByEmail("notpresent@nowhere.com", testUsers)
     const expectedResult = undefined;
-    assert.equal(user, undefined);
+    assert.equal(user, expectedResult);
   })
 });

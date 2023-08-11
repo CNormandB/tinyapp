@@ -12,9 +12,9 @@ const generateRandomString = function(length) {
 
 const urlsForUser = function(id, database) {
   let urls = {};
-  for (let [url_id, entry] of Object.entries(database)) {
+  for (let [urlID, entry] of Object.entries(database)) {
     if (entry.userID === id) {
-      urls[url_id] = entry.longURL;
+      urls[urlID] = entry.longURL;
     }
   }
   return urls;
@@ -22,7 +22,7 @@ const urlsForUser = function(id, database) {
 
 const getUserByEmail = function(email, database) {
   let user = null;
-  for (const [user_id, user] of Object.entries(database)) {
+  for (const [userID, user] of Object.entries(database)) {
     if (user.email === email) {
       return user;
     }

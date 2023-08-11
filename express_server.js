@@ -53,10 +53,10 @@ app.get("/urls/new", (req, res) => {
 
 //render "My URL's" page using the urlDatabase object and urls_index.ejs
 app.get("/urls", (req, res) => {
-  const user_id = req.session.user_id;
-  const urls = urlsForUser(user_id, urlDatabase);
+  const userID = req.session.user_id;
+  const urls = urlsForUser(userID, urlDatabase);
   const templateVars = {
-    user: users[user_id],
+    user: users[userID],
     urls: urls
   };
   res.render("urls_index", templateVars);
@@ -77,12 +77,12 @@ app.post("/urls", (req, res) => {
 
 //render individual pages for each  ID (access by adding the short URL after /urls/)
 app.get("/urls/:id", (req, res) => {
-  const user_id = req.session.user_id;
+  const userID = req.session.user_id;
   const item = urlDatabase[req.params.id];
-  if (!user_id) {
+  if (!userID) {
     res.status(401);
     res.send("<h1>Must be logged in to view URLs</h1>");
-  } else if (user_id != item.userID) {
+  } else if (userID !== item.userID) {
     res.status(400);
     res.send("Either the URL in question does not exist, or you do not have permission to view it!");
   } else {
@@ -96,19 +96,19 @@ app.get("/urls/:id", (req, res) => {
 
 /*
 Goal: update long url in URLDatabase
-variables: 
+variables:
   req.params.id (key)
   urlDatabase (where the long url is held)
   req.body.longURL (access the new longURL)
    + redirect to /urls
 */
 app.post("/urls/:id", (req, res) => {
-  const user_id = req.session.user_id;
+  const userID = req.session.user_id;
   const item = urlDatabase[req.params.id];
-  if (!user_id) {
+  if (!userID) {
     res.status(401);
     res.send("Must be logged in to edit URLs!");
-  } else if (user_id != item.userID) {
+  } else if (userID !== item.userID) {
     res.status(400);
     res.send("Either the URL in question does not exist, or you do not have permission to view it!");
   } else {
@@ -119,16 +119,15 @@ app.post("/urls/:id", (req, res) => {
 
 //Delete selected URL + redirect to /urls
 app.post("/urls/:id/delete", (req, res) => {
-  const user_id = req.session.user_id;
+  const userID = req.session.user_id;
   const item = urlDatabase[req.params.id];
-  if (!user_id) {
+  if (!userID) {
     res.status(401);
     res.send("Must be logged in to edit URLs!");
-  } else if (user_id != item.userID) {
+  } else if (userID !== item.userID) {
     res.status(400);
     res.send("Either the URL in question does not exist, or you do not have permission to view it!");
-  }
-  else {
+  } else {
     delete urlDatabase[req.params.id];
     res.redirect("/urls");
   }
@@ -198,7 +197,7 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   let user = getUserByEmail(email, users);
-  if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
+  if (!user || !bcrypt.compareSync(password, user.password)) {
     res.status(403);
     res.send("email or password is incorrect");
   } else {
