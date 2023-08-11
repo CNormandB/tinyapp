@@ -13,6 +13,18 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
 
 function generateRandomString(length) {
   let result = '';
@@ -32,7 +44,7 @@ app.use(express.urlencoded({ extended: true }));
 //render "Create New URL" page with urls_new.ejs
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-  username: req.cookies["username"]
+  user : users[req.cookies.user_id]
 };
   res.render("urls_new", templateVars);
 });
@@ -40,7 +52,7 @@ app.get("/urls/new", (req, res) => {
 //render "My URL's" page using the urlDatabase object and urls_index.ejs
 app.get("/urls", (req, res) => {
   const templateVars = { 
-    username: req.cookies["username"],
+    user : users[req.cookies.user_id],
     urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
@@ -55,7 +67,7 @@ app.post("/urls", (req, res) => {
 //render individual pages for each  ID (access by adding the short URL after /urls/)
 app.get("/urls/:id", (req, res) => {
   const templateVars = { 
-    username: req.cookies["username"],
+    user : users[req.cookies.user_id],
     id: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
 });
@@ -92,8 +104,8 @@ app.post("/login",(req, res) => {
 });
 
 //It should remove the cookie named username + redirect to /urls
-app.post("/logout",(req, res) => {
-  res.clearCookie("username");
+app.post("/logout", (req, res) => {
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
@@ -102,7 +114,26 @@ app.get("/register",(req, res) => {
   res.render("user_registration")
 });
 
-
+//enables registration form for new users
+app.post("/register", (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password
+  //checks for incomplete forms and sends error 400 if incomplete
+  if (!email || !password){
+    res.status(400);
+    res.send("Please fill out both the email and password boxes!");
+  } else {
+    let newUserID = generateRandomString(13);
+    users[newUserID] = {
+      id: newUserID,
+      email: email,
+      password: password,
+    };
+    res.cookie("user_id", newUserID);
+    console.log(users);
+    res.redirect("/urls");
+  }
+});
 
 //say hello on / page
 app.get("/", (req, res) => {
