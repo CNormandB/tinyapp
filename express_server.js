@@ -107,7 +107,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 //It should set a cookie named username to the value submitted in the request body via the login form + redirect to /urls
-app.post("/login",(req, res) => {
+app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);
   res.redirect("/urls");
 });
@@ -147,6 +147,17 @@ app.post("/register", (req, res) => {
   console.log(users);
   res.redirect("/urls");
 });
+
+app.get("/login", (req, res) => {
+  res.render("user_login");
+});
+
+
+
+/*
+app.post("/login", (req, res) => {
+  if (lookupUserByEmail(email))
+});*/
 
 //say hello on / page
 app.get("/", (req, res) => {
