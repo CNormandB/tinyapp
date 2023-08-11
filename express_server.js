@@ -39,6 +39,15 @@ function generateRandomString(length) {
   return result;
 }
 
+const lookupUserByEmail = function(email){
+  for (const [user_id, user] of Object.entries(users)) {
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+}
+
 app.use(express.urlencoded({ extended: true }));
 
 //render "Create New URL" page with urls_new.ejs
@@ -122,17 +131,21 @@ app.post("/register", (req, res) => {
   if (!email || !password){
     res.status(400);
     res.send("Please fill out both the email and password boxes!");
-  } else {
-    let newUserID = generateRandomString(13);
-    users[newUserID] = {
-      id: newUserID,
-      email: email,
-      password: password,
-    };
-    res.cookie("user_id", newUserID);
-    console.log(users);
-    res.redirect("/urls");
   }
+  if (lookupUserByEmail(email)){
+    res.status(400);
+    res.send("email is already in use");
+  }
+  
+  let newUserID = generateRandomString(13);
+  users[newUserID] = {
+    id: newUserID,
+    email: email,
+    password: password,
+  };
+  res.cookie("user_id", newUserID);
+  console.log(users);
+  res.redirect("/urls");
 });
 
 //say hello on / page
